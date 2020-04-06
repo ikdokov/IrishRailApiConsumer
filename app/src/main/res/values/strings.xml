@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">IrishRailApiConsumer</string>
+    <string name="main_fragment_title">Irish Rail Real Time API Consumer</string>
+    <string name="stations">Stations</string>
+    <string name="minutes_left">%1$s minutes</string>
+    <string name="to_destination">to %1$s</string>
+    <string name="departure_point">Departure point:</string>
+    <string name="click_me">Click me!</string>
+    <string name="something_went_wrong">Something went wrong.</string>
+</resources>
