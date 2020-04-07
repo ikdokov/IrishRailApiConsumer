@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ikdokov.irishrailconsumer.R
 import com.ikdokov.irishrailconsumer.data.model.Resource
@@ -18,12 +18,9 @@ class StationSearchFragment : Fragment() {
 
     private lateinit var stationListAdapter: StationListAdapter
 
-    companion object {
-        fun newInstance() =
-            StationSearchFragment()
+    private val viewModel: StationSearchViewModel by lazy {
+        ViewModelProvider(this@StationSearchFragment).get(StationSearchViewModel::class.java)
     }
-
-    private lateinit var viewModel: StationSearchViewModel
 
     private val stationListObserver = Observer<Resource<List<StationUiModel>>> { stationListResource ->
         when (stationListResource.status) {
@@ -72,13 +69,15 @@ class StationSearchFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         setHasOptionsMenu(true)
+        setupToolbar()
+
+        viewModel.getAllStations().observe(viewLifecycleOwner, stationListObserver)
+    }
+
+    private fun setupToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         toolbar.setTitle(R.string.stations)
         toolbar.setNavigationOnClickListener { activity?.onBackPressed() }
-
-        viewModel = ViewModelProviders.of(this).get(StationSearchViewModel::class.java)
-        viewModel.getAllStations().observe(viewLifecycleOwner, stationListObserver)
-
     }
 
     private fun handleStationsStatusError() {
@@ -87,13 +86,16 @@ class StationSearchFragment : Fragment() {
     }
 
     private fun handleStationsSuccess(stations: List<StationUiModel>) {
-        val linearLayoutManager = LinearLayoutManager(activity)
         stationListAdapter = StationListAdapter(stations.toMutableList())
-
         rv_station_list?.apply {
             setHasFixedSize(true)
-            layoutManager = linearLayoutManager
+            layoutManager = LinearLayoutManager(activity)
             adapter = stationListAdapter
         }
+    }
+
+    companion object {
+        fun newInstance() =
+            StationSearchFragment()
     }
 }
